@@ -9,6 +9,19 @@ describe('list of books', () => {
     return setup(pool);
   });
 
+  it('POST /books should create a new book with an author', async () => {
+    const res = await request(app)
+      .post('/books')
+      .send({ name: 'Great Expectations', released: 1860, authorIds: [1, 2, 3, 4] });
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBe('Great Expectations');
+
+    const { body: saw } = await request(app).get(`/books/${res.body.id}`);
+    console.log(saw);
+
+    expect(saw.authors.length).toBe(4);
+  });
+
 
   it('#GET /should fetch and return a list of books', async () => {
     const res = await request(app).get('/books');
