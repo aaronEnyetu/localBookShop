@@ -32,6 +32,35 @@ describe('list of books', () => {
     expect(saw).toHaveProperty('released', 1860);
   });
 
+  it('/books/:id should return books details', async () => {
+    const resp = await request(app).get('/books/1');
+    expect(resp.status).toEqual(200);
+    expect(resp.body).toEqual({
+      id: '1',
+      name: 'Great Expectations',
+      released: 1860,
+      authors: [
+        {
+          dob: 1812,
+          id: 1,
+          name: 'Charles Dickens',
+        },
+      ],
+    });
+  });
+
+  it('POST /books should add a new book', async () => {
+    const resp = await request(app).post('/books').send({
+      name: 'Great Expectations',
+      released: 1860,
+    });
+
+    expect(resp.status).toEqual(200);
+    expect(resp.body.name).toEqual('Great Expectations');
+    expect(resp.body.released).toEqual(1860);
+    expect(resp.body.id).not.toBeUndefined();
+  });
+
 
   afterAll(() => {
     pool.end();
